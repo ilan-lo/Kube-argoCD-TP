@@ -7,6 +7,26 @@ const CHAOS_FAILURE_RATE = parseFloat(process.env.CHAOS_FAILURE_RATE || '0');
 
 app.use(express.json());
 
+export function requestLogger(req, res, next) {
+  const start = Date.now();
+
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+
+    console.log(
+      `[${new Date().toISOString()}] ` +
+      `${req.method} ${req.originalUrl} ` +
+      `${res.statusCode} ` +
+      `${duration}ms ` +
+      `from ${req.ip}`+
+      `on database-service`
+    );
+  });
+
+  next();
+}
+app.use(requestLogger); // 👈 logs globaux
+
 // BUG: Crash if DB_NAME is not set
 if (!DB_NAME) {
     console.error('FATAL: DB_NAME environment variable is required!');

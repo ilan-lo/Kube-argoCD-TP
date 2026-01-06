@@ -7,6 +7,26 @@ const ORDER_SERVICE_URL = process.env.ORDER_SERVICE_URL || 'http://order-service
 
 app.use(express.json());
 
+export function requestLogger(req, res, next) {
+  const start = Date.now();
+
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+
+    console.log(
+      `[${new Date().toISOString()}] ` +
+      `${req.method} ${req.originalUrl} ` +
+      `${res.statusCode} ` +
+      `${duration}ms ` +
+      `from ${req.ip}`+
+      `on api-service`
+    );
+  });
+
+  next();
+}
+app.use(requestLogger); // 👈 logs globaux
+
 // Health endpoint
 app.get('/health', (req, res) => {
     res.json({ status: 'healthy', service: 'api-service' });

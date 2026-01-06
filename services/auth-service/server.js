@@ -9,6 +9,26 @@ app.use(express.json());
 // This simulates a poorly implemented cache
 const tokenCache = [];
 
+export function requestLogger(req, res, next) {
+  const start = Date.now();
+
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+
+    console.log(
+      `[${new Date().toISOString()}] ` +
+      `${req.method} ${req.originalUrl} ` +
+      `${res.statusCode} ` +
+      `${duration}ms ` +
+      `from ${req.ip}`+
+      `on auth-service`
+    );
+  });
+
+  next();
+}
+app.use(requestLogger); // 👈 logs globaux
+
 // Health endpoint
 app.get('/health', (req, res) => {
     res.json({

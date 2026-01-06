@@ -11,7 +11,7 @@ SERVICES=("gateway" "api-service" "auth-service" "order-service" "database-servi
 
 for SERVICE in "${SERVICES[@]}"; do
   echo "📦 Building $SERVICE..."
-  docker build -t $SERVICE:latest services/day-4/broken-production/$SERVICE
+  docker build -t $SERVICE:latest services/$SERVICE
 done
 
 echo "🏷️  Tagging notification-service with wrong tag (for the bug)..."
@@ -27,4 +27,4 @@ for SERVICE in "${SERVICES[@]}"; do
 done
 
 echo "✅ All broken services built and imported!"
-echo "   Now deployed the broken manifests: kubectl apply -f k8s/day-4/broken-production/"
+echo "   Now deployed the broken manifests: kubectl apply -f broken-production/"
